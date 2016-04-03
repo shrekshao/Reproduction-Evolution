@@ -37,8 +37,12 @@ var graphics = (function () {
         graphics.canvasSelector = canvasSelector;
     }
 
+    // function drawCell(x, y, alive) {
+    //     graphics.ctx.fillStyle = (alive) ? onColour : offColour;
+    //     graphics.ctx.fillRect(x * cellSize + 1, y * cellSize + 1, cellSize - 1, cellSize - 1);
+    // }
     function drawCell(x, y, alive) {
-        graphics.ctx.fillStyle = (alive) ? onColour : offColour;
+        graphics.ctx.fillStyle = world.getColor(x,y);
         graphics.ctx.fillRect(x * cellSize + 1, y * cellSize + 1, cellSize - 1, cellSize - 1);
     }
     
@@ -73,25 +77,33 @@ var graphics = (function () {
     }
 
     function smartPaint() {
-        var x,
-            y;
+        // var x,
+        //     y;
 
-        for (x = 0; x < life.xCells; x++) {
-            for (y = 0; y < life.yCells; y++) {
-                if (life.prev[x][y] !== life.next[x][y]) {
-                    graphics.drawCell(x, y, life.next[x][y]);
-                }
-            }
-        }
+        // for (x = 0; x < life.xCells; x++) {
+        //     for (y = 0; y < life.yCells; y++) {
+        //         if (life.prev[x][y] !== life.next[x][y]) {
+        //             graphics.drawCell(x, y, life.next[x][y]);
+        //         }
+        //     }
+        // }
+        paint();
     }
 
     function paint() {
-        var x,
-            y;
+        // var x,
+        //     y;
 
-        for (x = 0; x < life.xCells; x++) {
-            for (y = 0; y < life.yCells; y++) {
-                graphics.drawCell(x, y, life.prev[x][y]);
+        // for (x = 0; x < life.xCells; x++) {
+        //     for (y = 0; y < life.yCells; y++) {
+        //         graphics.drawCell(x, y, life.prev[x][y]);
+        //     }
+        // }
+        var x, y;
+
+        for (x = 0; x < world.xCells; x++) {
+            for (y = 0; y < world.yCells; y++) {
+                graphics.drawCell(x, y, true);
             }
         }
     }
@@ -112,6 +124,8 @@ var graphics = (function () {
     };
 }());
 
+var world;
+
 var life = (function () {
     var yCells,
         xCells,
@@ -123,15 +137,19 @@ var life = (function () {
         x,
         y;
 
-    var world;
+    
 
     function initUniverse(canvasSelector) {
-        world = new World();
-        world.initWorld(900, 500);
-        
         graphics.initCanvas(canvasSelector);
-        life.xCells = Math.floor((graphics.canvas.width - 1) / graphics.cellSize);
-        life.yCells = Math.floor((graphics.canvas.height - 1) / graphics.cellSize);
+        var xCells = Math.floor((graphics.canvas.width - 1) / graphics.cellSize);
+        var yCells = Math.floor((graphics.canvas.height - 1) / graphics.cellSize);
+        
+        world = new World();
+        world.initWorld(xCells, yCells);
+        
+        
+        life.xCells = xCells;
+        life.yCells = yCells;
         graphics.ctx.fillStyle = graphics.offColour;
         graphics.ctx.fillRect(0, 0, life.xCells * graphics.cellSize, life.yCells * graphics.cellSize);
         graphics.ctx.fillStyle = graphics.gridColour;
@@ -153,6 +171,9 @@ var life = (function () {
         $('body').mouseup(function (e) {
             $(graphics.canvasSelector).unbind('mousemove');
         });
+        
+        
+        graphics.smartPaint();
     }
 
     function neighbourCount(x, y) {
@@ -211,6 +232,8 @@ var life = (function () {
         // }
         
         world.update();
+        
+        graphics.smartPaint();
     }
 
     function toggleLife() {

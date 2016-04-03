@@ -26,14 +26,14 @@ var World = function() {
      this.grid = [];
      this.preGrid = [];
      
-     this.xCells = 900;
-     this.yCells = 500;
+     this.xCells = 0;
+     this.yCells = 0;
      
 };
 
 World.prototype.initWorld  = function (x, y) {
-    this.x = x;
-    this.y = y;
+    this.xCells = x;
+    this.yCells = y;
     
     this.grid = createArray(x, y);
     this.preGrid = createArray(x, y);
@@ -49,9 +49,15 @@ World.prototype.initWorld  = function (x, y) {
     this.grid[3][3].energy = 3;
     this.grid[3][3].speciesId = 1;
     this.grid[3][3].attack = 12;
+    this.grid[3][3].color = 'green';
     
     //TODO
 };
+
+World.prototype.getColor = function (x, y) {
+    return this.grid[x][y] ? this.grid[x][y].color : 'white';
+};
+
 
 World.prototype.neighbourEffect = function (x, y, me) {
     var neighbours = [
@@ -83,7 +89,7 @@ World.prototype.neighbourEffect = function (x, y, me) {
 World.prototype.update = function () {
     //var tmp = this.preGrid;
     
-    // Alert: this is not correct actually
+    // !!!Alert: this is not correct actually
     // some changes first
     this.preGrid = this.grid;
     //this.grid = this.preGrid;

@@ -1,6 +1,7 @@
 // a creature instance contains all status
 var Creature = function () {
     this.speciesId = 0;
+    this.color = 'blue';
     
     // status
     this.energy = 0;
