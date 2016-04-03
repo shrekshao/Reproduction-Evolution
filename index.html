@@ -50,11 +50,14 @@
         
 <!--<a href="https://github.com/jpulgarin/canvaslife"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>-->
 
-<p>An html + js lightweight strategy game inspired by Conway's Game of Life. Based on canvaslife - Julian Pulgarin. </p>
+<p>An html + js lightweight strategy game (a failed experiement -_-) inspired by Conway's Game of Life. Based on canvaslife - Julian Pulgarin. </p>
 <h2>Usage</h2>
 <ol>
     <li>Populate the grid by click and dragging your mouse to revive/kill cells, or by choosing pre-populated patterns from the drop-down.</li>
-    <li>Press the "Start Life" button to see your cells evolve.</li>
+    <li>There are 3 species on one universe, representing Herbivores, carnivores, and plants</li>
+    <li>Players can upgrade their species by 'buying' new features with mutation (unimplemented)</li>
+    <li>Creatures reproduce, live, combat, or die based on a more complex scheme involving lots of parameters</li>
+    <li>Goal of each mission is to make other species distinct. </li>
 </ol>
 <p>
     <input type="button" id="start" value="Start Life" onclick="life.toggleLife();">
@@ -117,7 +120,7 @@
     <li>shell</li>
     <li>fat 3</li>
 </ul>
-<input type="button" value="claw" />
+<input type="button" value="claw" onclick="world.speciesArray[0].attack+=1;world.speciesArray[0].features.push('claw');"/>
 <input type="button" value="sting" />
 <input type="button" value="poison" />
 <input type="button" value="antenna" />
