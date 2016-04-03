@@ -42,7 +42,7 @@ var graphics = (function () {
     //     graphics.ctx.fillRect(x * cellSize + 1, y * cellSize + 1, cellSize - 1, cellSize - 1);
     // }
     function drawCell(x, y, alive) {
-        graphics.ctx.fillStyle = world.getColor(x,y);
+        graphics.ctx.fillStyle = world.getColor(x,y,offColour);
         graphics.ctx.fillRect(x * cellSize + 1, y * cellSize + 1, cellSize - 1, cellSize - 1);
     }
     
@@ -62,10 +62,12 @@ var graphics = (function () {
             if (x > life.xCells - 1 || y > life.yCells - 1) {
                 return;
             }
-            if (typeof state === 'undefined') {
-                state = !life.prev[x][y];
-            }
-            life.prev[x][y] = state;
+            // if (typeof state === 'undefined') {
+            //     state = !life.prev[x][y];
+            // }
+            // life.prev[x][y] = state;
+            world.generateCell(x,y, world.curGenSpeciesId);
+            
             drawCell(x, y, state);
         }
 
@@ -87,6 +89,8 @@ var graphics = (function () {
         //         }
         //     }
         // }
+        
+        //tmp;
         paint();
     }
 
@@ -249,63 +253,64 @@ var life = (function () {
     // Parses files in Run Length Encoded Format
     // http://www.conwaylife.com/wiki/RLE
     function loadPattern(url) {
-        var g = graphics,
-            l = life,
-            padding = 30;
+        console.log("load pattern");
+        // var g = graphics,
+        //     l = life,
+        //     padding = 30;
 
-        $.ajax({
-            url: url,
-            success: function (data) {
-                var match = data.match(/x\s=\s(\d*).*?y\s=\s(\d*).*\r([^]*)!/),
-                    x = parseInt(match[1], 10),
-                    pattern = match[3].replace(/\s+/g, ""), // remove whitespace
-                    lines = pattern.split('$'),
-                    offset = 0,
-                    i,
-                    line,
-                    length,
-                    j,
-                    y = padding - 1;
+        // $.ajax({
+        //     url: url,
+        //     success: function (data) {
+        //         var match = data.match(/x\s=\s(\d*).*?y\s=\s(\d*).*\r([^]*)!/),
+        //             x = parseInt(match[1], 10),
+        //             pattern = match[3].replace(/\s+/g, ""), // remove whitespace
+        //             lines = pattern.split('$'),
+        //             offset = 0,
+        //             i,
+        //             line,
+        //             length,
+        //             j,
+        //             y = padding - 1;
 
-                $(graphics.canvasSelector).attr('height', graphics.cellSize * (y + 1 + (padding * 2)));
-                $(graphics.canvasSelector).attr('width', graphics.cellSize * (x + 1 + (padding * 2)));
-                $(graphics.canvasSelector).unbind('mousedown');
-                life.initUniverse(graphics.canvasSelector);
+        //         $(graphics.canvasSelector).attr('height', graphics.cellSize * (y + 1 + (padding * 2)));
+        //         $(graphics.canvasSelector).attr('width', graphics.cellSize * (x + 1 + (padding * 2)));
+        //         $(graphics.canvasSelector).unbind('mousedown');
+        //         life.initUniverse(graphics.canvasSelector);
 
 
-                for (i = 0; i < lines.length; i++) {
-                    y++;
-                    x = padding;
-                    line = lines[i];
-                    while (line) {
-                        if (line.charAt(0) === 'o' || line.charAt(0) === 'b') {
-                            if (line.charAt(0) === 'o') {
-                                life.prev[x][y] = true;
-                                graphics.drawCell(x, y, true);
-                            }
-                            x++;
-                            line = line.substring(1);
-                        } else {
-                            length = line.match(/(\d*)/)[1];
-                            line = line.substring(length.length);
-                            length = parseInt(length, 10);
-                            if (!line) {
-                                y += length - 1;
-                                break;
-                            }
-                            if (line.charAt(0) === 'o') {
-                                for (j = 0; j < length; j++) {
-                                    life.prev[x + j][y] = true;
-                                    graphics.drawCell(x + j, y, true);
-                                }
-                            }
-                            x += length;
-                            line = line.substring(1);
-                        }
-                    }
-                }
-            }
-        });
+        //         for (i = 0; i < lines.length; i++) {
+        //             y++;
+        //             x = padding;
+        //             line = lines[i];
+        //             while (line) {
+        //                 if (line.charAt(0) === 'o' || line.charAt(0) === 'b') {
+        //                     if (line.charAt(0) === 'o') {
+        //                         life.prev[x][y] = true;
+        //                         graphics.drawCell(x, y, true);
+        //                     }
+        //                     x++;
+        //                     line = line.substring(1);
+        //                 } else {
+        //                     length = line.match(/(\d*)/)[1];
+        //                     line = line.substring(length.length);
+        //                     length = parseInt(length, 10);
+        //                     if (!line) {
+        //                         y += length - 1;
+        //                         break;
+        //                     }
+        //                     if (line.charAt(0) === 'o') {
+        //                         for (j = 0; j < length; j++) {
+        //                             life.prev[x + j][y] = true;
+        //                             graphics.drawCell(x + j, y, true);
+        //                         }
+        //                     }
+        //                     x += length;
+        //                     line = line.substring(1);
+        //                 }
+        //             }
+        //         }
+        //     }
+        // });
     }
 
     function isAlive() {
@@ -333,22 +338,9 @@ var life = (function () {
     }
 
     function clear() {
-        var x,
-            y;
-
-        for (x = 0; x < life.xCells; x++) {
-            for (y = 0; y < life.yCells; y++) {
-                life.next[x][y] = false;
-            }
-        }
+        world.initWorld(life.xCells, life.yCells);
 
         graphics.smartPaint();
-
-        for (x = 0; x < life.xCells; x++) {
-            for (y = 0; y < life.yCells; y++) {
-                life.prev[x][y] = false;
-            }
-        }
     }
 
     return {
