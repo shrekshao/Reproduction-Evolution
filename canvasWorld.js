@@ -27,7 +27,7 @@ var graphics = (function () {
         ctx,
         canvasSelector,
         cellSize = 10, // pixels
-        onColour = 'rgb(0, 0, 0)',
+        onColour = 'rgb(0, 127, 0)',
         offColour = 'rgb(255, 255, 255)',
         gridColour = 'rgb(50, 50, 50)';
 
@@ -41,6 +41,7 @@ var graphics = (function () {
         graphics.ctx.fillStyle = (alive) ? onColour : offColour;
         graphics.ctx.fillRect(x * cellSize + 1, y * cellSize + 1, cellSize - 1, cellSize - 1);
     }
+    
 
 
     function handleMouse(e) {
@@ -122,8 +123,12 @@ var life = (function () {
         x,
         y;
 
+    var world;
 
     function initUniverse(canvasSelector) {
+        world = new World();
+        world.initWorld(900, 500);
+        
         graphics.initCanvas(canvasSelector);
         life.xCells = Math.floor((graphics.canvas.width - 1) / graphics.cellSize);
         life.yCells = Math.floor((graphics.canvas.height - 1) / graphics.cellSize);
@@ -175,38 +180,37 @@ var life = (function () {
     }
 
     function nextGen() {
-        var l = life,
-            g = graphics,
-            count;
 
-        for (x = 0; x < life.xCells; x++) {
-            for (y = 0; y < life.yCells; y++) {
-                life.next[x][y] = life.prev[x][y];
-            }
-        }
+        // for (x = 0; x < life.xCells; x++) {
+        //     for (y = 0; y < life.yCells; y++) {
+        //         life.next[x][y] = life.prev[x][y];
+        //     }
+        // }
 
-        for (x = 0; x < life.xCells; x++) {
-            for (y = 0; y < life.yCells; y++) {
-                count = neighbourCount(x, y);
+        // for (x = 0; x < life.xCells; x++) {
+        //     for (y = 0; y < life.yCells; y++) {
+        //         count = neighbourCount(x, y);
 
-                // Game of Life rules
-                if (prev[x][y]) {
-                    if (count < 2 || count > 3) {
-                        next[x][y] = false;
-                    }
-                } else if (count === 3) {
-                    next[x][y] = true;
-                }
-            }
-        }
+        //         // Game of Life rules
+        //         if (prev[x][y]) {
+        //             if (count < 2 || count > 3) {
+        //                 next[x][y] = false;
+        //             }
+        //         } else if (count === 3) {
+        //             next[x][y] = true;
+        //         }
+        //     }
+        // }
 
-        graphics.smartPaint();
+        // graphics.smartPaint();
 
-        for (x = 0; x < life.xCells; x++) {
-            for (y = 0; y < life.yCells; y++) {
-                life.prev[x][y] = life.next[x][y];
-            }
-        }
+        // for (x = 0; x < life.xCells; x++) {
+        //     for (y = 0; y < life.yCells; y++) {
+        //         life.prev[x][y] = life.next[x][y];
+        //     }
+        // }
+        
+        world.update();
     }
 
     function toggleLife() {
