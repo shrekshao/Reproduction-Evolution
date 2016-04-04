@@ -35,6 +35,7 @@ var Species = function (typeID = 0) {
     gui.add(this.creature, 'attack', 0, 10);
     gui.add(this.creature, 'reproduce', 1, 5);
     gui.add(this.creature, 'size', 1, 5);
+    gui.add(this.creature, 'size', 1, 5);
 };
 
 // Creature.prototype.updateFeatures = function () {
